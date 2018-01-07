@@ -27,7 +27,7 @@ Custom relationships are used to track the link between instance issues and thei
 master issue.  The config directory contains the definition for these relationships
 that can be integrated into your Mantis configuration.
 
-The master issues require the followign custom fields:
+The master issues require the following custom fields:
 
  * "Recur Days" - the number of days to wait since the last closed instance before 
 creating a new instance
