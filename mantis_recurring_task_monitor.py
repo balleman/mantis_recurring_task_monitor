@@ -56,8 +56,8 @@ for seed in r_seed.json()['issues']:
     last_open = -1
     if 'relationships' in seed:
         for rel in seed['relationships']:
-            if rel['type']['name'] == "has instance":
-                r_rel_issue = requests.get(args.api + '/issues/' + str(rel['target_id']), headers=headers)
+            if rel['type']['name'] == "has-instance":
+                r_rel_issue = requests.get(args.api + '/issues/' + str(rel['issue']['id']), headers=headers)
                 #print r_rel_issue.text
                 issue = r_rel_issue.json()["issues"][0]
                 updated = dateutil.parser.parse(issue["updated_at"])

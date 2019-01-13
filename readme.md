@@ -20,9 +20,6 @@ and add new issues or notes as needed.
 Requirements
 ------------
 
-MantisBT, patched to support adding relationships via the REST API.  This PR was
-submitted to add that ability: https://github.com/mantisbt/mantisbt/pull/1265
-
 Custom relationships are used to track the link between instance issues and their
 master issue.  The config directory contains the definition for these relationships
 that can be integrated into your Mantis configuration.
