@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import argparse
 import json
@@ -21,9 +21,11 @@ post_headers = { 'Authorization': args.token, 'Content-Type': 'application/json'
 r_proj = requests.get(args.api + '/projects', headers=headers)
 
 project_id = -1
-projects = {} 
+projects = {}
+projects_by_id = {}
 for project in r_proj.json()['projects']:
     projects[project['name']] = project['id']
+    projects_by_id[project['id']] = project
 project_id = projects[args.project]
 
 if project_id == -1:
@@ -31,6 +33,10 @@ if project_id == -1:
     raise Exception("Failed to find a matching project name.")
 
 print("Project ID: " + str(project_id))
+
+src_cats_by_id = {}
+for cat in projects_by_id[project_id]['categories']:
+    src_cats_by_id[cat['id']] = cat['name']
 
 r_seed = requests.get(args.api + '/issues/?project_id=' + str(project_id), headers=headers)
 #print(json.dumps(r_seed.json(), indent=2))
@@ -86,7 +92,19 @@ for seed in r_seed.json()['issues']:
         n_issue['custom_fields'] = []
         n_issue['project']['id'] = projects[instance_project]
         n_issue['project']['name'] = instance_project
-
+        category_name = src_cats_by_id[seed['category']['id']]
+        dst_cats_by_name = {}
+        for cat in projects_by_id[projects[instance_project]]['categories']:
+            dst_cats_by_name[cat['name']] = cat['id']
+        if category_name in dst_cats_by_name:
+            n_issue['category']['id'] = dst_cats_by_name[category_name]
+            n_issue['category']['name'] = category_name
+        elif "General" in dst_cats_by_name:
+            n_issue['category']['id'] = dst_cats_by_name["General"]
+            n_issue['category']['name'] = "General"
+        else:
+            n_issue['category']['name'] = "General"
+            n_issue['category']['id'] = 0
         r_issue = requests.post(args.api + '/issues', headers=post_headers, data=json.dumps(n_issue))
         print(r_issue.text)
         j_issue = r_issue.json()
